@@ -8,4 +8,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Game/_Scenes/SampleScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Game/_Scenes/Main_Menu.unity
+    guid: aa21604c0cef34e4c97cafbe18677d08
+  - enabled: 1
+    path: Assets/Game/_Scenes/Single_Player.unity
+    guid: c7e0630ac9c93d04b81bafdc77a3a80e
+  - enabled: 1
+    path: Assets/Game/_Scenes/Co-Op_Mode.unity
+    guid: 0f404fe34186d0b42aa8cc3ed6d46e2d
   m_configObjects: {}
