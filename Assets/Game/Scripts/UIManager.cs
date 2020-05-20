@@ -26,6 +26,7 @@ public class UIManager : MonoBehaviour
     public void ShowTitleScreen()
     {
         mainMenu.SetActive(true);
+        score = 0;
     }
 
     public void HideTitleScreen()
