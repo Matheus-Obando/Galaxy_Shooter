@@ -9,6 +9,9 @@ public class Player : MonoBehaviour
     public bool canTripleShot = false;
     public bool isSpeedBoostActive = false;
     public bool shieldActive = false;
+    public bool isPlayerOne = false;
+    public bool isPlayerTwo = false;
+
     public int lives = 3;
 
     [SerializeField] private GameObject _explosionPrefab; // To select the explosion animation
@@ -31,21 +34,24 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        transform.position = new Vector3(0,-2.1f,0); // Start position when the scene start
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
+
+        if (!_gameManager.isCoopMode)
+        {
+            transform.position = new Vector3(0, -2.1f, 0); // Start position when the scene start
+        }
 
         if (_uiManager != null) // if _uiManager was founded 
         {
             _uiManager.UpdateLives(lives);
-        }
+        }     
 
-        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
-
-        if(_spawnManager != null)
-        {
-            _spawnManager.StartSpawnRoutines();
-        }
+        //if (_spawnManager != null)
+        //{
+        //    _spawnManager.StartSpawnRoutines();
+        //}
 
 		hitCount = 0;
 		_audioSource = GetComponent<AudioSource>();
@@ -58,7 +64,12 @@ public class Player : MonoBehaviour
         Movement();
 
         //Shoot laser
-        if(Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
+        if( isPlayerOne && (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)))
+        {
+            ShootLaser();
+        }
+
+        else if (isPlayerTwo && (Input.GetKeyDown(KeyCode.Keypad0)))
         {
             ShootLaser();
         }
@@ -72,45 +83,95 @@ public class Player : MonoBehaviour
         float verticalInput;
         // transform.Translate(Vector3.right);
         // transform.Translate(new Vector3(1,0,0)); //It has the same effect from above
-        horizontalInput = Input.GetAxis("Horizontal"); // Returns a negative or positive float value dependending on the input direction
-        verticalInput = Input.GetAxis("Vertical"); // Returns a negative or positive float value dependending on the input direction
 
-
-        // Movement methods
-        if (isSpeedBoostActive == true) // On the alternative implementation this conditional section is unnecessary
+        if (isPlayerOne)
         {
-            transform.Translate(Vector3.right * Time.deltaTime * _moveSpeed * 2.0f * horizontalInput);
-            transform.Translate(Vector3.up * Time.deltaTime * _moveSpeed * 2.0f * verticalInput);
+            horizontalInput = Input.GetAxis("Horizontal"); // Returns a negative or positive float value dependending on the input direction
+            verticalInput = Input.GetAxis("Vertical"); // Returns a negative or positive float value dependending on the input direction
+
+            // Movement methods
+            if (isSpeedBoostActive) // On the alternative implementation this conditional section is unnecessary
+            {
+                transform.Translate(Vector3.right * Time.deltaTime * _moveSpeed * 2.0f * horizontalInput);
+                transform.Translate(Vector3.up * Time.deltaTime * _moveSpeed * 2.0f * verticalInput);
+            }
+
+            else
+            {
+                transform.Translate(Vector3.right * Time.deltaTime * _moveSpeed * horizontalInput); //It will move 1 meter per second instead of 60 meters per frame
+                transform.Translate(Vector3.up * Time.deltaTime * _moveSpeed * verticalInput);
+            }
         }
 
-        else
+        if (isPlayerTwo)
         {
-            transform.Translate(Vector3.right * Time.deltaTime * _moveSpeed * horizontalInput); //It will move 1 meter per second instead of 60 meters per frame
-            transform.Translate(Vector3.up * Time.deltaTime * _moveSpeed * verticalInput);
-        }
+            if (isSpeedBoostActive)
+            {
+                if (Input.GetKey(KeyCode.Keypad8))
+                {
+                    transform.Translate(Vector3.up * Time.deltaTime * _moveSpeed * 2.0f);
+                }
 
-        // Limiters to prevent the ship from getting out of the screen (left, right, up, down) or in that case: horizontal [-8.3, 8.3] and vertical [-4.2, 0]
-        if (transform.position.y > 0)
-        {
-            transform.position = new Vector3(transform.position.x, 0, 0); // If it hits the limit of the screen, it will always receive the limit position
-        }
-        else if (transform.position.y < -4.2f)
-        {
-            transform.position = new Vector3(transform.position.x, -4.2f, 0);  // Same
-        }
+                if (Input.GetKey(KeyCode.Keypad2))
+                {
+                    transform.Translate(Vector3.down * Time.deltaTime * _moveSpeed * 2.0f);
+                }
 
-        if (transform.position.x > 8.3f)
-        {
-            transform.position = new Vector3(8.3f, transform.position.y, 0);
-        }
-        else if (transform.position.x < -8.3f)
-        {
-            transform.position = new Vector3(-8.3f, transform.position.y, 0);
-        }
+                if (Input.GetKey(KeyCode.Keypad4))
+                {
+                    transform.Translate(Vector3.left * Time.deltaTime * _moveSpeed * 2.0f);
+                }
 
+                if (Input.GetKey(KeyCode.Keypad6))
+                {
+                    transform.Translate(Vector3.right * Time.deltaTime * _moveSpeed * 2.0f);
+                }
+            }
 
+            else
+            {
+                if (Input.GetKey(KeyCode.Keypad8))
+                {
+                    transform.Translate(Vector3.up * Time.deltaTime * _moveSpeed);
+                }
+
+                if (Input.GetKey(KeyCode.Keypad2))
+                {
+                    transform.Translate(Vector3.down * Time.deltaTime * _moveSpeed);
+                }
+
+                if (Input.GetKey(KeyCode.Keypad4))
+                {
+                    transform.Translate(Vector3.left * Time.deltaTime * _moveSpeed);
+                }
+
+                if (Input.GetKey(KeyCode.Keypad6))
+                {
+                    transform.Translate(Vector3.right * Time.deltaTime * _moveSpeed);
+                }
+            }
+
+            // Limiters to prevent the ship from getting out of the screen (left, right, up, down) or in that case: horizontal [-8.3, 8.3] and vertical [-4.2, 0]
+            if (transform.position.y > 0)
+            {
+                transform.position = new Vector3(transform.position.x, 0, 0); // If it hits the limit of the screen, it will always receive the limit position
+            }
+            else if (transform.position.y < -4.2f)
+            {
+                transform.position = new Vector3(transform.position.x, -4.2f, 0);  // Same
+            }
+
+            if (transform.position.x > 8.3f)
+            {
+                transform.position = new Vector3(8.3f, transform.position.y, 0);
+            }
+            else if (transform.position.x < -8.3f)
+            {
+                transform.position = new Vector3(-8.3f, transform.position.y, 0);
+            }
+
+        }
     }
-
     protected void ShootLaser()
     {
         if (Time.time > _nextFire)

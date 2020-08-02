@@ -814,8 +814,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c363ae3555d1816459155e6efbb84f37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isCoopMode: 0
   gameOver: 1
-  player: {fileID: 5161911698003907928, guid: a1cbf3fcbb0f39741a0fbfa44c54b46c, type: 3}
+  _player: {fileID: 5161911698003907928, guid: a1cbf3fcbb0f39741a0fbfa44c54b46c, type: 3}
+  _coopPlayers: {fileID: 8183510668021104932, guid: 05773e64722e900438b86ed658ac25bb,
+    type: 3}
 --- !u!4 &1463967729
 Transform:
   m_ObjectHideFlags: 0
