@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour
     private GameObject _player;
     [SerializeField]
     private GameObject _coopPlayers;
+    [SerializeField]
+    private GameObject _pauseMenuPanel;
 
     private UIManager _uiManager;
     private SpawnManager _spawnManager;
@@ -30,7 +32,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (gameOver == true)
+        if (gameOver)
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
@@ -53,6 +55,25 @@ public class GameManager : MonoBehaviour
             {
                 SceneManager.LoadScene("Main_Menu", LoadSceneMode.Single);
             }
+        }
+
+        if (Input.GetKey(KeyCode.P) && !gameOver)
+        {
+            if (_pauseMenuPanel != null)
+            {
+                _pauseMenuPanel.SetActive(true);
+                Time.timeScale = 0;
+            }
+        }
+
+    }
+
+    public void ResumeGame()
+    {
+        if (_pauseMenuPanel != null)
+        {
+            _pauseMenuPanel.SetActive(false);
+            Time.timeScale = 1;
         }
     }
 }
