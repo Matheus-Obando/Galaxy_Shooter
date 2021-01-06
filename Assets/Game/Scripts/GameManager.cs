@@ -18,10 +18,14 @@ public class GameManager : MonoBehaviour
     private UIManager _uiManager;
     private SpawnManager _spawnManager;
 
+    private Animator _pauseAnimator;
+
     private void Start()
     {
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
+        _pauseAnimator = GameObject.Find("Pause_Menu_Panel").GetComponent<Animator>();
+        _pauseAnimator.updateMode = AnimatorUpdateMode.UnscaledTime;
     }
 
     // If game over is true
@@ -57,11 +61,12 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        if (Input.GetKey(KeyCode.P) && !gameOver)
+        if (Input.GetKey(KeyCode.P))
         {
-            if (_pauseMenuPanel != null)
+            if (_pauseMenuPanel != null && !gameOver)
             {
                 _pauseMenuPanel.SetActive(true);
+                _pauseAnimator.SetBool("isPaused", true);
                 Time.timeScale = 0;
             }
         }
