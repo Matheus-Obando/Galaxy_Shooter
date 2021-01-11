@@ -220,7 +220,7 @@ public class Player : MonoBehaviour
 
 			_uiManager.UpdateLives(lives);
             if(lives == 0){
-
+                _uiManager.UpdateBestScore();
                 Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
                 _gameManager.gameOver = true; // It will return to the title screen
                 _uiManager.ShowTitleScreen(); // It will show the title screen again
